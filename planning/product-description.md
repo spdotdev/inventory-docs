@@ -137,6 +137,7 @@ not a second project.
 | Ref | Question | Affects |
 |---|---|---|
 | Q-3 | Live push or pull-to-refresh? (trending: pull-to-refresh) | WebSockets vs none |
-| Q-6 | Which parent domain for `inventory.{domain}`? | Infra/config (`INVENTORY_DOMAIN`) |
+
+*(Q-6 resolved 2026-06-23: domain defaults to the host app's own `APP_URL` domain, overridable via `INVENTORY_DOMAIN`.)*
 
 *Source of truth for decisions: [`project-brief.md`](./project-brief.md).*

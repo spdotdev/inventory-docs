@@ -37,7 +37,7 @@ Pure inventory — no expiry, recipes, or shopping list.
 (`spdotdev/inventory`) installed via Composer into a host Laravel app (**sd-admin**),
 mirroring the `spdotdev/scuttle-dev` pattern:
 - Auto-discovered `InventoryServiceProvider`; namespace `Spdotdev\Inventory\`.
-- **Host-based routing:** answers on `config('inventory.domain')` → `inventory.{domain}`.
+- **Host-based routing:** answers on `config('inventory.domain')`, which **defaults to the host app's own domain** (parsed from `APP_URL`) and is overridable via `INVENTORY_DOMAIN` (e.g. `inventory.scuttle.dev`).
 - `/` serves a **marketing "coming soon" landing page**; `/api/v1/*` is the headless API.
 - Ships **its own auth** (`inventory_users`) — email/password **and** Google sign-in,
   issuing Sanctum tokens. Independent of the host app's users.
@@ -77,7 +77,7 @@ mirroring the `spdotdev/scuttle-dev` pattern:
 | D-025 | Generalise `freezers` → `storage_locations` with `type` (freezer / fridge / pantry / other). | `LOCKED` |
 | D-026 | Invite via join code + shareable/copyable link + QR (link encodes the code; QR encodes the link). | `LOCKED` |
 | **D-027** | **Backend ships as a Composer package (`spdotdev/inventory`) mounted into a host Laravel app (sd-admin), not a standalone app.** | `LOCKED` |
-| **D-028** | **Host-based routing on `inventory.{domain}`; `/` = marketing landing page, `/api/v1` = headless API.** | `LOCKED` |
+| **D-028** | **Host-based routing via `config('inventory.domain')`, defaulting to the host app's own domain (`APP_URL`) and overridable with `INVENTORY_DOMAIN`; `/` = marketing landing page, `/api/v1` = headless API.** | `LOCKED` |
 | **D-029** | **Package ships its own auth (`inventory_users`): email/password + Google sign-in (Socialite), issuing Sanctum tokens. Independent of host users.** | `LOCKED` |
 | **D-030** | **All package-owned tables prefixed `inventory_` to avoid host-table collisions.** | `LOCKED` |
 | **D-031** | **Database engine = MySQL on the host app's default connection (matches sd-admin). No separate DB.** | `LOCKED` |
@@ -134,8 +134,10 @@ Canonical: [`../specs/api-contract.md`](../specs/api-contract.md). REST+JSON und
 - App screens: Storage overview · Shelves (tab strip + swipe) · Search · Invite
   (code/link/QR) · Settings · Auth (email/password + Google).
 - The web landing page reuses the Frost palette for brand consistency.
-- Reference mock: `frost-app.html` (+ `frost-dark.png` / `frost-light.png`) — **not yet
-  in repo; TODO to add to `inventory-android/docs/`.**
+- Reference mock: `frost-app.html` + `frost-dark.png` / `frost-light.png`, committed to
+  [`inventory-android/docs/design/`](https://github.com/spdotdev/inventory-android/tree/main/docs/design).
+  The HTML is an interactive 5-screen prototype (Storage · Search · Shelves · Invite · Settings)
+  with a working light/dark toggle.
 
 ---
 
@@ -157,8 +159,9 @@ Canonical: [`../specs/api-contract.md`](../specs/api-contract.md). REST+JSON und
 
 ## OPEN QUESTIONS
 - **Q-3:** Live cross-user push, or pull-to-refresh? (Recommendation: pull-to-refresh — no WebSockets.)
-- **Q-6:** Which parent domain does `inventory.{domain}` attach to (e.g. `inventory.scuttle.dev`)?
-  Config-driven (`INVENTORY_DOMAIN`); pick at infra step.
+- ~~**Q-6:** Which parent domain for `inventory.{domain}`?~~ **Resolved 2026-06-23:** the package
+  defaults to the **host app's own domain** (`APP_URL` host); a dedicated subdomain like
+  `inventory.scuttle.dev` is opt-in via `INVENTORY_DOMAIN`.
 
 ---
 
@@ -171,4 +174,7 @@ Canonical: [`../specs/api-contract.md`](../specs/api-contract.md). REST+JSON und
   sd-admin via host-based routing on `inventory.{domain}` (D-027/D-028). Added own-auth with
   email/password + Google (D-029), table prefixing (D-030), MySQL host DB (D-031), Artisan
   CLI (D-032), global "Inventory" naming (D-033), and a marketing landing page. D-005
-  superseded. Schema + API extracted to `specs/`. Q-6 opened (parent domain).
+  superseded. Schema + API extracted to `specs/`.
+- `2026-06-23` — Q-6 resolved: `inventory.domain` defaults to the host app's own domain
+  (`APP_URL`), overridable via `INVENTORY_DOMAIN`. Frost mocks (`frost-app.html`,
+  `frost-dark.png`, `frost-light.png`) added to `inventory-android/docs/design/`.

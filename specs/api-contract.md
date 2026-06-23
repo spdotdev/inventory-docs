@@ -6,8 +6,9 @@
 
 ## Base
 
-- **Host:** `https://inventory.{domain}` (host-based routing; the package answers on
-  `config('inventory.domain')`).
+- **Host:** the package answers on `config('inventory.domain')`, which **defaults to the
+  host app's own domain** (`APP_URL` host) and is overridable via `INVENTORY_DOMAIN`
+  (e.g. a dedicated `inventory.scuttle.dev`).
 - **Prefix:** `/api/v1`
 - **Format:** REST + JSON.
 - **Auth:** Laravel **Sanctum** bearer tokens. Email/password **and** Google sign-in
