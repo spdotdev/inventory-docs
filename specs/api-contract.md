@@ -3,6 +3,9 @@
 > Single source of truth for the HTTP contract between `inventory-android` (client)
 > and `inventory-laravel` (server). Versioned from day one; **backward compatible** —
 > a shipped Android build updates on the user's schedule, not ours.
+>
+> **Status: fully implemented in `inventory-laravel` as of 2026-06-23** (CI-green). This
+> document is kept in sync with the implementation.
 
 ## Base
 
@@ -26,10 +29,21 @@ POST   /api/v1/auth/logout                                    -> revoke current 
 ```
 
 **Google flow:** Android performs native Google Sign-In, obtains a Google **ID
-token**, and posts it to `/auth/google`. The server verifies the ID token
-(Socialite stateless / Google token validation), finds-or-creates the
-`inventory_users` row (matching on `google_id` then `email`), and returns a Sanctum
-token. Google-only users have a null `password`.
+token**, and posts it to `/auth/google`. The server verifies the ID token via a
+swappable `GoogleIdTokenVerifier` (default impl: Google's `tokeninfo` endpoint —
+**not** Socialite, whose `userFromToken()` expects an OAuth *access* token, not an
+ID token). Verification requires:
+- a valid Google **issuer** (`accounts.google.com`);
+- the **audience** (`aud`) to match a configured client ID — `INVENTORY_GOOGLE_CLIENT_IDS`.
+  **Fails closed**: with no client IDs configured, all Google tokens are rejected;
+- **`email_verified` = true** — this is what makes find-or-create-by-email safe (an
+  attacker can't get Google to verify an email they don't control).
+
+On success it finds-or-creates the `inventory_users` row (matching on `google_id` then
+`email`) and returns a Sanctum token. Google-only users have a null `password`.
+
+**Errors:** invalid/untrusted Google token → **401**. Validation failures (register/login)
+→ 422. Logout requires `auth:sanctum`.
 
 ## Households & membership
 

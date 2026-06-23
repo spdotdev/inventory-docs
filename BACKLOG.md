@@ -17,6 +17,11 @@ Markers: 💡 IDEA · ✅ DONE.
 ---
 
 ## Done
+- ✅ `2026-06-23` — **Specs reconciled to the implemented backend.** `api-contract.md` auth
+  section updated to the real Google ID-token verifier (tokeninfo, fails closed without a
+  configured `aud`, requires `email_verified`) instead of "Socialite", + an implementation
+  -status banner. The `data-model.md` relationship diagram already serves as the ERD for the
+  household → location → shelf → product tree.
 - ✅ `2026-06-23` — Planning split into three repos; backend re-architected as a Composer
   package mounted into sd-admin (D-027…D-033); schema + API extracted to `specs/`;
   product description reconciled; Frost mocks committed to `inventory-android/docs/design/`;
