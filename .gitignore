@@ -3,3 +3,6 @@
 *~
 .idea/
 .vscode/
+
+# Local agent/loop state
+/.claude/
