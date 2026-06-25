@@ -8,6 +8,7 @@ Shared planning and specifications for the **Inventory** product — the single 
 | ------------ | ----------------------------------------------------------------------------- |
 | `planning/`  | Raw product planning and the breakdown that splits work into Android/Laravel. |
 | `specs/`     | Cross-cutting specs: product vision, data model / ERD, and the API contract.  |
+| `ops/`       | Operational runbooks — e.g. [`deploy-runbook.md`](ops/deploy-runbook.md).      |
 
 App-specific planning lives in each application repo's own `docs/` directory.
 
